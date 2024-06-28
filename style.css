@@ -39,7 +39,7 @@ h1{
 
 button{
 color: #fff;
-background-color: #000;
+background-color: #0400ff;
 border: none;
 width: 120px;
 height: 40px;
@@ -50,7 +50,7 @@ transition: all o.3s ease;
 }
 
 button:hover{
-    background-color: #434343;
+    background-color: #0077ff;
 }
 
 .move-history{
