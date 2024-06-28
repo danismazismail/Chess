@@ -1,13 +1,13 @@
-// Wait for the DOM to be fully loaded before executing code
+// Kodu çalıştırmadan önce DOM'un tamamen yüklenmesini bekleyin
 
 document.addEventListener('DOMContentLoaded',()=>{
-    let board = null; // initialize the chessboard
-    const game = new Chess(); // create new Chess.js gameinstance}
-    const moveHistory = document.getElementById("move-history"); // get move history container
-    let moveCount = 1;//initialize the move count
-    let userColor = "w"; // initialize the user's color as white
+    let board = null; // satranç tahtasını başlat
+    const game = new Chess(); // yeni Chess.js oyun örneği oluştur
+    const moveHistory = document.getElementById("move-history"); 
+    let moveCount = 1;// hareket sayısını başlat
+    let userColor = "w"; // kullanıcının rengini beyaz olarak başlat
 
-    // function to make a random move for the computer
+    // bilgisayar için rastgele bir hareket yapma işlevi
     const makeRandomMove = ()=>{
         const possibleMoves = game.moves();
 
@@ -18,25 +18,25 @@ document.addEventListener('DOMContentLoaded',()=>{
             const move = possibleMoves[randomIdx];
             game.move(move);
             board.position(game.fen());
-            recordMove(move,moveCount); // record and display the move with move count
-            moveCount++; // increament the move count
+            recordMove(move,moveCount); // hamle sayımı ile hareketi kaydedin ve görüntüleyin
+            moveCount++; // hareket sayısını artır
         }
     };
 
-    // function to record and display a move in the move history
+    // Hareket geçmişinde bir hareketi kaydetme ve görüntüleme işlevi
     const recordMove= (move, count) => {
         const formattedMove = count%2===1 ?`${Math.ceil(count/2)}.${move}`:`${move}`+" -";
         moveHistory.textContent += formattedMove + ' ';
-        moveHistory.scrollTop = moveHistory.scrollHeight;//autoscroll to the latest move
+        moveHistory.scrollTop = moveHistory.scrollHeight;//en son hamleye otomatik kaydırma
     };
 
-    //function to handle the start of a drag position
+    //sürükleme konumunun başlangıcını işleme işlevi
     const onDragStart = (source, piece) => {
-        //Allow the user to drag only their own pieces based on color
+        //Kullanıcının renge göre yalnızca kendi parçalarını sürüklemesine izin ver
         return !game.game_over() && piece.search(userColor) === 0;
     };
 
-    //function to handle a piece drop on the board
+    //tahtaya düşen bir parçayı idare etme işlevi
     const onDrop = (source, target) =>{
         const move = game.move({
             from: source,
@@ -47,16 +47,16 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(move === null) return 'snapback';
 
         window.setTimeout(makeRandomMove, 250);
-        recordMove(move.san, moveCount); // record and display the move with move count
+        recordMove(move.san, moveCount); // hamle sayımı ile hareketi kaydedin ve görüntüleyin
         moveCount++;
     };
 
-    // function to handle the end of a piece snap animation
+    // Bir parça snap animasyonunun sonunu işleme işlevi
     const onSnapEnd = () => {
         board.position(game.fen());
     };
 
-    // configuration options for the chessboard
+    // satranç tahtası için yapılandırma seçenekleri
     const boardConfig = {
         showNotation: true,
         draggable:true,
@@ -69,10 +69,10 @@ document.addEventListener('DOMContentLoaded',()=>{
         snapSpeed:100,
     };
     
-    // initialize the chessboard
+    // satranç tahtasını başlat
     board = Chessboard('board', boardConfig);
 
-    // event listener for the play again button
+    // Tekrar oynat düğmesi için olay dinleyicisi
 
     document.querySelector('.play-again').addEventListener('click', ()=>{
         game.reset();
@@ -82,9 +82,9 @@ document.addEventListener('DOMContentLoaded',()=>{
         userColor = 'w';
     });
 
-    // event listener for the set position button
+    // konumu ayarlama düğmesi için olay dinleyicisi
     document.querySelector(".set-pos").addEventListener("click",()=>{
-        const fen = prompt("Enter the FEN notation for the desired position!");
+        const fen = prompt("İstediğiniz pozisyon kodunu giriniz!");
         if(fen !== null){
             if(game.load(fen)){
                 board.position(fen);
@@ -92,15 +92,15 @@ document.addEventListener('DOMContentLoaded',()=>{
                 moveCount =1;
                 userColor = "w";                
             }else{
-                alert("Invalid FEN notation. Please try again");
+                alert("Geçersiz pozisyon kodu tekrar deneyiniz.");
             }
         }
     });
-    // event listener for the  flip board button
+    // flip board düğmesi için olay dinleyicisi
     document.querySelector(".flip-board").addEventListener("click", ()=>{
         board.flip();
         makeRandomMove();
-        //toggle user's color after flipping the board
+        //tahtayı çevirdikten sonra kullanıcının rengini değiştir
         userColor = userColor === "w" ? "b":"w";
     });
 });
